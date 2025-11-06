@@ -1,0 +1,42 @@
+{
+  "originHash" : "a99738091e493bf60bf57fb186377ee25fccb62a1838b9567f9a925fa69d7d73",
+  "pins" : [
+    {
+      "identity" : "sqlite.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stephencelis/SQLite.swift.git",
+      "state" : {
+        "revision" : "392dd6058624d9f6c5b4c769d165ddd8c7293394",
+        "version" : "0.15.4"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser.git",
+      "state" : {
+        "revision" : "cdd0ef3755280949551dc26dee5de9ddeda89f54",
+        "version" : "1.6.2"
+      }
+    },
+    {
+      "identity" : "swift-toolchain-sqlite",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-toolchain-sqlite",
+      "state" : {
+        "revision" : "b626d3002773b1a1304166643e7f118f724b2132",
+        "version" : "1.0.4"
+      }
+    },
+    {
+      "identity" : "swifttmdb",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jmarkIT/SwiftTMDB",
+      "state" : {
+        "branch" : "main",
+        "revision" : "3078a7d9bd53d457d34842a4ffe8b59f7be3a41e"
+      }
+    }
+  ],
+  "version" : 3
+}
