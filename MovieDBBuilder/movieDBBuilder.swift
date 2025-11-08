@@ -43,30 +43,79 @@ struct CreateMovieDB: AsyncParsableCommand {
 
         do {
             let db = try Connection("db.sqlite3")
-            try createMoviesTable(for: db)
+            try createDatabase(for: db)
 
             let movies = Table("movies")
-            let id = SQLite.Expression<Int64>("id")
+            let movieId = SQLite.Expression<Int64>("id")
             let title = SQLite.Expression<String>("title")
             let budget = SQLite.Expression<Int64>("budget")
             let revenue = SQLite.Expression<Int64>("revenue")
             let runtime = SQLite.Expression<Int64>("runtime")
 
+            let genres = Table("genres")
+            let genreId = SQLite.Expression<Int64>("id")
+            let genreName = SQLite.Expression<String>("name")
+
+            let moviesToGenres = Table("movies_to_genres")
+            let moviesToGenresId = SQLite.Expression<Int64>("id")
+            let moviesToGenresMovieId = SQLite.Expression<Int64>("movie_id")
+            let moviesToGenresGenreId = SQLite.Expression<Int64>("genre_id")
+
+            // Add the movie to the database
             for movie in tmdbMovies {
                 do {
                     let insert = movies.insert(
-                        id <- Int64(movie.id),
+                        movieId <- Int64(movie.id),
                         title <- movie.title,
                         budget <- Int64(movie.budget),
                         revenue <- Int64(movie.revenue),
                         runtime <- Int64(movie.runtime),
-                        
+
                     )
                     try db.run(insert)
+                    
                 } catch {
                     // Continue on per-row errors (e.g., unique constraint violations)
-                    print("Skipping movie id \(movie.id) due to DB error: \(error)")
+                    print(
+                        "Skipping movie id \(movie.id) due to DB error: \(error)"
+                    )
                     continue
+                }
+                
+                // Add each of the movie's genre's to the database
+                // TODO: Remove this and instead populate this with an api call that just pulls all the genres
+                for genre in movie.genres {
+                    do {
+                        let insertGenre = genres.insert(
+                            genreId <- Int64(genre.id),
+                            genreName <- genre.name
+                        )
+                        try db.run(insertGenre)
+                    } catch {
+                        // Continue on per row errors (e.g., unique constraint violations)
+                        print(
+                            "Skipping genre \(genre.name) due to error: \(error)error"
+                        )
+                        continue
+                    }
+                }
+                
+                // Add a relationship to the junction table for each genre
+                for genre in movie.genres {
+                    do {
+                        // TODO: do this more cleanly
+                        let key = Int64(String(movie.id) + String(genre.id))!
+                        let insert = moviesToGenres.insert(
+                           moviesToGenresId <- key,
+                           moviesToGenresMovieId <- Int64(movie.id),
+                           moviesToGenresGenreId <- Int64(genre.id),
+                        )
+                        try db.run(insert)
+                    } catch {
+                        // Continue on per-row errors (e.g., unique constraint violations)
+                        print(error)
+                        continue
+                    }
                 }
             }
         } catch {
@@ -82,4 +131,3 @@ struct RuntimeError: Error, CustomStringConvertible {
         self.description = description
     }
 }
-
