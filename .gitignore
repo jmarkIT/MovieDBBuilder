@@ -62,3 +62,4 @@ fastlane/screenshots/**/*.png
 fastlane/test_output
 
 *.sqlite3
+tmdb.csv
