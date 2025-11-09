@@ -42,13 +42,9 @@ struct CreateMovieDB: AsyncParsableCommand {
         }
 
         do {
+            // Set up database connection
             let db = try Connection("db.sqlite3")
             try createDatabase(for: db)
-
-            let moviesToGenres = Table("movies_to_genres")
-            let moviesToGenresId = SQLite.Expression<Int64>("id")
-            let moviesToGenresMovieId = SQLite.Expression<Int64>("movie_id")
-            let moviesToGenresGenreId = SQLite.Expression<Int64>("genre_id")
 
             // Call api to populate genres table
             do {
@@ -58,7 +54,7 @@ struct CreateMovieDB: AsyncParsableCommand {
                 print(error)
             }
 
-            // Add the movie to the database
+            // Add each movie to the database
             for movie in tmdbMovies {
                 do {
                     try insertMovie(movie, into: db)
@@ -68,23 +64,39 @@ struct CreateMovieDB: AsyncParsableCommand {
                     )
                     continue
                 }
+                
+                // Add each person in the credits to the people table
+                if let credits = movie.credits {
+                    print("Adding credits for \(movie.title)")
+                    for credit in credits.cast {
+                        do {
+                            try insertPerson(person: credit, with: db)
+                        } catch {
+                            print("Skipping \(credit.name) due to error: \(error)")
+                        }
+                    }
+                    for credit in credits.crew {
+                        do {
+                            try insertPerson(person: credit, with: db)
+                        } catch {
+                            print("Skipping \(credit.name) due to error: \(error)")
+                        }
+                    }
+                    
+                }
 
                 // Add a relationship to the junction table for each genre
-                for genre in movie.genres {
-                    do {
-                        // TODO: do this more cleanly
-                        let key = Int64(String(movie.id) + String(genre.id))!
-                        let insert = moviesToGenres.insert(
-                            moviesToGenresId <- key,
-                            moviesToGenresMovieId <- Int64(movie.id),
-                            moviesToGenresGenreId <- Int64(genre.id),
-                        )
-                        try db.run(insert)
-                    } catch {
-                        // Continue on per-row errors (e.g., unique constraint violations)
-                        print(error)
-                        continue
-                    }
+                do {
+                    try insertMovieToGenre(movie: movie, with: db)
+                } catch {
+                    print("Failed to insert relationship of \(movie.title): \(error)")
+                }
+                
+                // Add a reltionship to the junction table for each credit
+                do {
+                    try insertPeopleToMovie(movie: movie, with: db)
+                } catch {
+                    print("Failed to insert relationship of \(movie.title): \(error)")
                 }
             }
         } catch {

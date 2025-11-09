@@ -12,6 +12,8 @@ func createDatabase(for db: Connection) throws {
     try createMoviesTable(for: db)
     try createGenresTable(for: db)
     try createMoviesToGenresTable(for: db)
+    try createPeopleTable(for: db)
+    try createPeopleToMoviesTable(for: db)
 }
 
 func createMoviesTable(for db: Connection) throws {
@@ -57,7 +59,55 @@ func createMoviesToGenresTable(for db: Connection) throws {
             t.column(movieIdAndGenreId, primaryKey: true)
             t.column(movieId)
             t.column(genreId)
-            
+
+        }
+    )
+}
+
+func createPeopleTable(for db: Connection) throws {
+    let peopleTable = Table("people")
+    let id = SQLite.Expression<Int64>("id")
+    let name = SQLite.Expression<String>("name")
+    let gender = SQLite.Expression<Int64>("gender")
+    let knownForDepartment = SQLite.Expression<String?>("known_for_department")
+    let placeOfBirth = SQLite.Expression<String?>("place_of_birth")
+    let birthday = SQLite.Expression<String?>("birthday")
+    let deathday = SQLite.Expression<String?>("deathday")
+
+    try db.run(
+        peopleTable.create(ifNotExists: true) { t in
+            t.column(id, primaryKey: true)
+            t.column(name)
+            t.column(gender)
+            t.column(knownForDepartment)
+            t.column(placeOfBirth)
+            t.column(birthday)
+            t.column(deathday)
+        }
+    )
+}
+
+func createPeopleToMoviesTable(for db: Connection) throws {
+    let peopleToMoviesTable = Table("people_to_movies")
+    let peopleToMoviesId = SQLite.Expression<String>("id")
+    let personId = SQLite.Expression<Int64>("person_id")
+    let movieId = SQLite.Expression<Int64>("movie_id")
+    let isCast = SQLite.Expression<Int64>("is_cast")
+    let character = SQLite.Expression<String?>("role")
+    let order = SQLite.Expression<Int64?>("order")
+    let department = SQLite.Expression<String?>("department")
+    let job = SQLite.Expression<String?>("job")
+
+    try db.run(
+        peopleToMoviesTable.create(ifNotExists: true) { t in
+            t.column(peopleToMoviesId, primaryKey: true)
+            t.column(personId)
+            t.column(movieId)
+            t.column(isCast)
+            t.column(character)
+            t.column(order)
+            t.column(department)
+            t.column(job)
         }
     )
 }
