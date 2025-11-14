@@ -7,7 +7,7 @@
 
 import ArgumentParser
 import Foundation
-import SQLite
+import GRDB
 import SwiftTMDB
 
 @main
@@ -24,10 +24,12 @@ struct CreateMovieDB: AsyncParsableCommand {
         else {
             throw RuntimeError("Couldn't read from '\(inputFile)'")
         }
+        print("Getting tmdbids from file \(inputFile)")
         for line in input.components(separatedBy: .newlines) {
             guard !line.isEmpty else { continue }
             tmdbIDs.append(line.trimmingCharacters(in: .whitespacesAndNewlines))
         }
+
         for id in tmdbIDs {
             do {
                 let movie = try await tmdb.getMovie(
@@ -41,67 +43,168 @@ struct CreateMovieDB: AsyncParsableCommand {
             }
         }
 
+        var tmdbGenres: [Genre] = []
         do {
-            // Set up database connection
-            let db = try Connection("db.sqlite3")
-            try createDatabase(for: db)
+            let genres = try await tmdb.getGenres()
+            tmdbGenres.append(contentsOf: genres)
+        } catch {
+            print("Error while getting genres: \(error)")
+        }
 
-            // Call api to populate genres table
-            do {
-                try await insertGenres(using: tmdb, into: db)
-            } catch {
-                print("Failed to insert genres: Aborting")
-                print(error)
+        let dbMovies = tmdbMovies.map(Movies.init(from:))
+        let dbGenres = tmdbGenres.map(Genres.init(from:))
+        let dbPeople = tmdbMovies.flatMap { movie in
+            guard let credits = movie.credits else { return [] as [People] }
+            return credits.cast.map(People.init(from:))
+                + credits.crew.map(People.init(from:))
+        }
+        let dbMoviesToGenres = tmdbMovies.flatMap { movie in
+            movie.genres.map {
+                MoviesToGenres(movieId: movie.id, genreId: $0.id)
             }
+        }
+        let dbMoviesToPeople = tmdbMovies.flatMap { movie in
+            guard let credits = movie.credits else {
+                return [] as [MoviesToPeople]
+            }
+            return credits.cast.map {
+                MoviesToPeople(
+                    id: $0.creditId,
+                    movieId: movie.id,
+                    personId: $0.id,
+                    isCast: 1,
+                    castId: $0.castId,
+                    character: $0.character,
+                    order: $0.order,
+                    department: $0.department,
+                    job: $0.job
 
-            // Add each movie to the database
-            for movie in tmdbMovies {
-                do {
-                    try insertMovie(movie, into: db)
-                } catch {
-                    print(
-                        "Skipping movie \(movie.title) due to error: \(error)"
+                )
+            }
+                + credits.crew.map {
+                    MoviesToPeople(
+                        id: $0.creditId,
+                        movieId: movie.id,
+                        personId: $0.id,
+                        isCast: 0,
+                        castId: $0.castId,
+                        character: $0.character,
+                        order: $0.order,
+                        department: $0.department,
+                        job: $0.job
                     )
-                    continue
                 }
-                
-                // Add each person in the credits to the people table
-                if let credits = movie.credits {
-                    print("Adding credits for \(movie.title)")
-                    for credit in credits.cast {
-                        do {
-                            try insertPerson(person: credit, with: db)
-                        } catch {
-                            print("Skipping \(credit.name) due to error: \(error)")
-                        }
+        }
+
+        do {
+            let dbQueue = try! DatabaseQueue(path: "db.sqlite3")
+            try await makeTables(dbQueue: dbQueue)
+
+            do {
+                try await dbQueue.write { db in
+                    print("Inserting movies...")
+                    for movie in dbMovies {
+                        try movie.upsert(db)
                     }
-                    for credit in credits.crew {
-                        do {
-                            try insertPerson(person: credit, with: db)
-                        } catch {
-                            print("Skipping \(credit.name) due to error: \(error)")
-                        }
+
+                    print("Inserting genres...")
+                    for genre in dbGenres {
+                        try genre.upsert(db)
+                    }
+
+                    print("Inserting people...")
+                    for person in dbPeople {
+                        try person.upsert(db)
                     }
                     
-                }
+                    print("Inserting movie-genre relationships...")
+                    for movieToGenre in dbMoviesToGenres {
+                        try movieToGenre.upsert(db)
+                    }
+                    
+                    print("Inserting movie-person relationships...")
+                    for movieToPerson in dbMoviesToPeople {
+                        try movieToPerson.upsert(db)
+                    }
 
-                // Add a relationship to the junction table for each genre
-                do {
-                    try insertMovieToGenre(movie: movie, with: db)
-                } catch {
-                    print("Failed to insert relationship of \(movie.title): \(error)")
                 }
-                
-                // Add a reltionship to the junction table for each credit
-                do {
-                    try insertPeopleToMovie(movie: movie, with: db)
-                } catch {
-                    print("Failed to insert relationship of \(movie.title): \(error)")
-                }
+            } catch {
+                print("Error while inserting movies: \(error)")
             }
+
         } catch {
             print(error)
         }
+
+        //        do {
+        //            // Set up database connection
+        //            let db = try Connection("db.sqlite3")
+        //            try createDatabase(for: db)
+        //
+        //            // Call api to populate genres table
+        //            do {
+        //                try await insertGenres(using: tmdb, into: db)
+        //            } catch {
+        //                print("Failed to insert genres: Aborting")
+        //                print(error)
+        //            }
+        //
+        //            // Add each movie to the database
+        //            for movie in tmdbMovies {
+        //                do {
+        //                    try insertMovie(movie, into: db)
+        //                } catch {
+        //                    print(
+        //                        "Skipping movie \(movie.title) due to error: \(error)"
+        //                    )
+        //                    continue
+        //                }
+        //
+        //                // Add each person in the credits to the people table
+        //                if let credits = movie.credits {
+        //                    print("Adding credits for \(movie.title)")
+        //                    for credit in credits.cast {
+        //                        do {
+        //                            try insertPerson(person: credit, with: db)
+        //                        } catch {
+        //                            print(
+        //                                "Skipping \(credit.name) due to error: \(error)"
+        //                            )
+        //                        }
+        //                    }
+        //                    for credit in credits.crew {
+        //                        do {
+        //                            try insertPerson(person: credit, with: db)
+        //                        } catch {
+        //                            print(
+        //                                "Skipping \(credit.name) due to error: \(error)"
+        //                            )
+        //                        }
+        //                    }
+        //
+        //                }
+        //
+        //                // Add a relationship to the junction table for each genre
+        //                do {
+        //                    try insertMovieToGenre(movie: movie, with: db)
+        //                } catch {
+        //                    print(
+        //                        "Failed to insert relationship of \(movie.title): \(error)"
+        //                    )
+        //                }
+        //
+        //                // Add a reltionship to the junction table for each credit
+        //                do {
+        //                    try insertPeopleToMovie(movie: movie, with: db)
+        //                } catch {
+        //                    print(
+        //                        "Failed to insert relationship of \(movie.title): \(error)"
+        //                    )
+        //                }
+        //            }
+        //        } catch {
+        //            print(error)
+        //        }
     }
 }
 
