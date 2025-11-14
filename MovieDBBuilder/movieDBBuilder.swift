@@ -30,6 +30,7 @@ struct CreateMovieDB: AsyncParsableCommand {
             tmdbIDs.append(line.trimmingCharacters(in: .whitespacesAndNewlines))
         }
 
+        print("Getting movie data from TMDB API...")
         for id in tmdbIDs {
             do {
                 let movie = try await tmdb.getMovie(
@@ -43,6 +44,7 @@ struct CreateMovieDB: AsyncParsableCommand {
             }
         }
 
+        print("Getting genres from TMDB API...")
         var tmdbGenres: [Genre] = []
         do {
             let genres = try await tmdb.getGenres()
