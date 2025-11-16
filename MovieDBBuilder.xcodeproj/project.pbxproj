@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A2BA01A2EC57473004AE0EE /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 1A2BA0192EC57473004AE0EE /* GRDB */; };
 		1A9694AF2EBC07DB00D715A1 /* SwiftTMDB in Frameworks */ = {isa = PBXBuildFile; productRef = 1A9694AE2EBC07DB00D715A1 /* SwiftTMDB */; };
 		1A9694B22EBC07ED00D715A1 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 1A9694B12EBC07ED00D715A1 /* ArgumentParser */; };
-		1A9694D22EBC282E00D715A1 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 1A9694D12EBC282E00D715A1 /* SQLite */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,9 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A9694D22EBC282E00D715A1 /* SQLite in Frameworks */,
 				1A9694B22EBC07ED00D715A1 /* ArgumentParser in Frameworks */,
 				1A9694AF2EBC07DB00D715A1 /* SwiftTMDB in Frameworks */,
+				1A2BA01A2EC57473004AE0EE /* GRDB in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,7 +90,7 @@
 			packageProductDependencies = (
 				1A9694AE2EBC07DB00D715A1 /* SwiftTMDB */,
 				1A9694B12EBC07ED00D715A1 /* ArgumentParser */,
-				1A9694D12EBC282E00D715A1 /* SQLite */,
+				1A2BA0192EC57473004AE0EE /* GRDB */,
 			);
 			productName = MovieDBBuilder;
 			productReference = 1A9694A32EBC079100D715A1 /* MovieDBBuilder */;
@@ -123,7 +123,7 @@
 			packageReferences = (
 				1A9694AD2EBC07DB00D715A1 /* XCRemoteSwiftPackageReference "SwiftTMDB" */,
 				1A9694B02EBC07ED00D715A1 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
-				1A9694D02EBC282E00D715A1 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
+				1A2BA0182EC57473004AE0EE /* XCRemoteSwiftPackageReference "GRDB.swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1A9694A42EBC079100D715A1 /* Products */;
@@ -316,6 +316,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		1A2BA0182EC57473004AE0EE /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		1A9694AD2EBC07DB00D715A1 /* XCRemoteSwiftPackageReference "SwiftTMDB" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jmarkIT/SwiftTMDB";
@@ -332,17 +340,14 @@
 				minimumVersion = 1.6.2;
 			};
 		};
-		1A9694D02EBC282E00D715A1 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/stephencelis/SQLite.swift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.15.4;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1A2BA0192EC57473004AE0EE /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A2BA0182EC57473004AE0EE /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
 		1A9694AE2EBC07DB00D715A1 /* SwiftTMDB */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1A9694AD2EBC07DB00D715A1 /* XCRemoteSwiftPackageReference "SwiftTMDB" */;
@@ -352,11 +357,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1A9694B02EBC07ED00D715A1 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
 			productName = ArgumentParser;
-		};
-		1A9694D12EBC282E00D715A1 /* SQLite */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1A9694D02EBC282E00D715A1 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
-			productName = SQLite;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
