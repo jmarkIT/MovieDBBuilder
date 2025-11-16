@@ -41,7 +41,7 @@ func makeTables(dbQueue: DatabaseQueue) async throws {
         
         // Create MoviesToPeople table
         try db.create(table: "moviesToPeople", options: [.ifNotExists]) { t in
-            t.primaryKey("id", .text)
+            t.primaryKey("credit_id", .text)
             t.column("movie_id", .integer).notNull()
             t.column("person_id", .integer).notNull()
             t.column("is_cast", .integer).notNull()

@@ -7,6 +7,7 @@
 
 import GRDB
 import SwiftTMDB
+import Foundation
 
 struct Movies: Codable, Identifiable, FetchableRecord, PersistableRecord {
     var id: Int
@@ -109,7 +110,8 @@ extension MoviesToGenres {
 
 struct MoviesToPeople: Codable, Identifiable, FetchableRecord, PersistableRecord
 {
-    var id: String
+    var id: UUID = UUID()
+    var creditId: String
     var movieId: Int
     var personId: Int
     var isCast: Int
@@ -120,7 +122,7 @@ struct MoviesToPeople: Codable, Identifiable, FetchableRecord, PersistableRecord
     var job: String?
     
     enum CodingKeys: String, CodingKey {
-        case id
+        case creditId = "credit_id"
         case movieId = "movie_id"
         case personId = "person_id"
         case isCast = "is_cast"
@@ -132,7 +134,7 @@ struct MoviesToPeople: Codable, Identifiable, FetchableRecord, PersistableRecord
     }
 
     enum Columns {
-        static let id = Column(CodingKeys.id)
+        static let creditId = Column(CodingKeys.creditId)
         static let movieId = Column(CodingKeys.movieId)
         static let personId = Column(CodingKeys.personId)
         static let isCast = Column(CodingKeys.isCast)
@@ -147,7 +149,7 @@ struct MoviesToPeople: Codable, Identifiable, FetchableRecord, PersistableRecord
 extension MoviesToPeople {
     init(from api: Credit, movieId: Int, isCast: Int) {
         self.init(
-            id: api.creditId,
+            creditId: api.creditId,
             movieId: movieId,
             personId: api.id,
             isCast: isCast,

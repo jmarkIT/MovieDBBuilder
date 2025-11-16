@@ -16,7 +16,12 @@ struct CreateMovieDB: AsyncParsableCommand {
     var inputFile: String
 
     mutating func run() async throws {
-        let tmdb = TMDBClient()
+        guard let authToken = ProcessInfo.processInfo.environment["TMDB_TOKEN"] else {
+            print("Please set the TMDB_AUTH_TOKEN environment variable")
+            throw ExitCode.failure
+        }
+        let cfg = TMDBConfig(authToken: authToken)
+        let tmdb = TMDBClient(cfg: cfg)
         var tmdbIDs: [String] = []
         var tmdbMovies: [TMDBMovie] = []
         guard
@@ -65,13 +70,13 @@ struct CreateMovieDB: AsyncParsableCommand {
                 MoviesToGenres(movieId: movie.id, genreId: $0.id)
             }
         }
-        let dbMoviesToPeople = tmdbMovies.flatMap { movie in
+        let dbMoviesToPeople: [MoviesToPeople] = tmdbMovies.flatMap { (movie) -> [MoviesToPeople] in
             guard let credits = movie.credits else {
                 return [] as [MoviesToPeople]
             }
             return credits.cast.map {
                 MoviesToPeople(
-                    id: $0.creditId,
+                    creditId: $0.creditId,
                     movieId: movie.id,
                     personId: $0.id,
                     isCast: 1,
@@ -85,7 +90,7 @@ struct CreateMovieDB: AsyncParsableCommand {
             }
                 + credits.crew.map {
                     MoviesToPeople(
-                        id: $0.creditId,
+                        creditId: $0.creditId,
                         movieId: movie.id,
                         personId: $0.id,
                         isCast: 0,
