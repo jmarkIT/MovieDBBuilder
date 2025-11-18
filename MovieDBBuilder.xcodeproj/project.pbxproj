@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1A2BA01A2EC57473004AE0EE /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 1A2BA0192EC57473004AE0EE /* GRDB */; };
+		1A33B9D82ECA908500D1A8E2 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A33B9D72ECA908500D1A8E2 /* Package.swift */; };
 		1A9694AF2EBC07DB00D715A1 /* SwiftTMDB in Frameworks */ = {isa = PBXBuildFile; productRef = 1A9694AE2EBC07DB00D715A1 /* SwiftTMDB */; };
 		1A9694B22EBC07ED00D715A1 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 1A9694B12EBC07ED00D715A1 /* ArgumentParser */; };
 /* End PBXBuildFile section */
@@ -25,14 +26,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1A33B9D72ECA908500D1A8E2 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		1A9694A32EBC079100D715A1 /* MovieDBBuilder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MovieDBBuilder; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A9694C12EBC126700D715A1 /* tmdb.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = tmdb.csv; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		1A9694A52EBC079100D715A1 /* MovieDBBuilder */ = {
+		1A33B9D52ECA902F00D1A8E2 /* Sources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MovieDBBuilder;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -54,9 +56,10 @@
 		1A96949A2EBC079100D715A1 = {
 			isa = PBXGroup;
 			children = (
+				1A33B9D72ECA908500D1A8E2 /* Package.swift */,
 				1A9694C12EBC126700D715A1 /* tmdb.csv */,
-				1A9694A52EBC079100D715A1 /* MovieDBBuilder */,
 				1A9694A42EBC079100D715A1 /* Products */,
+				1A33B9D52ECA902F00D1A8E2 /* Sources */,
 			);
 			sourceTree = "<group>";
 		};
@@ -84,7 +87,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				1A9694A52EBC079100D715A1 /* MovieDBBuilder */,
+				1A33B9D52ECA902F00D1A8E2 /* Sources */,
 			);
 			name = MovieDBBuilder;
 			packageProductDependencies = (
@@ -140,6 +143,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A33B9D82ECA908500D1A8E2 /* Package.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
