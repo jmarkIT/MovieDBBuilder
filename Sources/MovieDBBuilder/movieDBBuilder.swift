@@ -18,7 +18,7 @@ struct CreateMovieDB: AsyncParsableCommand {
     mutating func run() async throws {
         guard let authToken = ProcessInfo.processInfo.environment["TMDB_TOKEN"]
         else {
-            print("Please set the TMDB_AUTH_TOKEN environment variable")
+            print("Please set the TMDB_TOKEN environment variable")
             throw ExitCode.failure
         }
         let cfg = TMDBConfig(authToken: authToken)
