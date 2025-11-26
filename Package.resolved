@@ -1,5 +1,5 @@
 {
-  "originHash" : "05089fe4c6b02a8c2ab5a3765156c27d8de81aea188ab015477e7f59679808fe",
+  "originHash" : "4fbc1787ffd4261ebd673ca5527c0cb01691676addc6ce12910bf01bcdab0a14",
   "pins" : [
     {
       "identity" : "grdb.swift",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "cdd0ef3755280949551dc26dee5de9ddeda89f54",
         "version" : "1.6.2"
+      }
+    },
+    {
+      "identity" : "swiftnotion",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jmarkIT/SwiftNotion.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "b3f1f475a782c91c7d4f4a3a0a369e1d89d8647d"
       }
     },
     {

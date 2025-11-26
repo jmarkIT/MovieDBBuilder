@@ -16,8 +16,9 @@ struct CreateMovieDB: AsyncParsableCommand {
     var inputFile: String
 
     mutating func run() async throws {
-        // Build TMDB api client
+        // Build api clients
         let tmdb = try createTMDBClient()
+        let notion = try createNotionClient()
 
         // Parse input file for TMDB IDs
         let tmdbIds = try parseTMDBIds(inputFile)

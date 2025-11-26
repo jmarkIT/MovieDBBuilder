@@ -8,6 +8,7 @@
 import ArgumentParser
 import Foundation
 import GRDB
+import SwiftNotion
 import SwiftTMDB
 
 func createTMDBClient() throws -> TMDBClient {
@@ -18,6 +19,16 @@ func createTMDBClient() throws -> TMDBClient {
     let cfg = TMDBConfig(authToken: tmdbToken)
     let tmdb = TMDBClient(cfg: cfg)
     return tmdb
+}
+
+func createNotionClient() throws -> NotionClient {
+    guard let notionToken = ProcessInfo.processInfo.environment["NOTION_TOKEN"]
+    else {
+        throw RuntimeError("Please set the NOTION_TOKEN environment variable")
+    }
+    let cfg = NotionConfig(authToken: notionToken)
+    let notion = NotionClient(cfg: cfg)
+    return notion
 }
 
 func parseTMDBIds(_ inputFile: String) throws -> [String] {

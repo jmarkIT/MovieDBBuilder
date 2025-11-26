@@ -16,6 +16,10 @@ let package = Package(
             url: "https://github.com/jmarkIT/SwiftTMDB.git",
             branch: "main"
         ),
+        .package(
+            url: "https://github.com/jmarkIT/SwiftNotion.git",
+            branch: "main"
+        ),
     ],
     targets: [
         // Targets are the basic building
@@ -30,6 +34,7 @@ let package = Package(
                 ),
                 .product(name: "GRDB", package: "GRDB.swift"),
                 .product(name: "SwiftTMDB", package: "SwiftTMDB"),
+                .product(name: "SwiftNotion", package: "SwiftNotion")
             ],
             path: "Sources"
         )
