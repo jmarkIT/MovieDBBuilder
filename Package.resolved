@@ -1,5 +1,5 @@
 {
-  "originHash" : "4fbc1787ffd4261ebd673ca5527c0cb01691676addc6ce12910bf01bcdab0a14",
+  "originHash" : "b2f45f4e160c9d8ee696d58e2811c41fadb47f399707dd5495a0523e0748a6e9",
   "pins" : [
     {
       "identity" : "grdb.swift",
@@ -25,7 +25,7 @@
       "location" : "https://github.com/jmarkIT/SwiftNotion.git",
       "state" : {
         "branch" : "main",
-        "revision" : "b3f1f475a782c91c7d4f4a3a0a369e1d89d8647d"
+        "revision" : "7f9475a8559567849af11443c58289293e03f106"
       }
     },
     {
