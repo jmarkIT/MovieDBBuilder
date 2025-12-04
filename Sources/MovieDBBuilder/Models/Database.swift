@@ -38,7 +38,7 @@ func makeTables(dbQueue: DatabaseQueue) async throws {
             t.column("genre_id", .integer).notNull()
             t.primaryKey(["movie_id", "genre_id"])
         }
-        
+
         // Create MoviesToPeople table
         try db.create(table: "moviesToPeople", options: [.ifNotExists]) { t in
             t.primaryKey("credit_id", .text)
@@ -50,6 +50,16 @@ func makeTables(dbQueue: DatabaseQueue) async throws {
             t.column("order", .integer)
             t.column("department", .text)
             t.column("job", .text)
+        }
+
+        // Create WeeklySelections table
+        try db.create(table: "weeklySelections", options: [.ifNotExists]) { t in
+            t.primaryKey("week_of", .text)
+            t.column("master_of_ceremony", .text).notNull()
+            t.belongsTo("movie1", inTable: "movies").notNull()
+            t.belongsTo("movie2", inTable: "movies" )
+            //            t.column("movie_id_1", .integer).notNull()
+            //            t.column("movie_id_2", .integer)
         }
     }
 }

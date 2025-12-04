@@ -134,7 +134,8 @@ func insertToDatabase(
     genres: [Genres],
     people: [People],
     moviesToGenres: [MoviesToGenres],
-    moviesToPeople: [MoviesToPeople]
+    moviesToPeople: [MoviesToPeople],
+    weeklySelections: [WeeklySelections]
 ) async throws {
     let dbQueue = try! DatabaseQueue(path: "db.sqlite3")
     try await makeTables(dbQueue: dbQueue)
@@ -163,6 +164,11 @@ func insertToDatabase(
         print("Inserting movie-person relationships...")
         for movieToPerson in moviesToPeople {
             try movieToPerson.upsert(db)
+        }
+        
+        print("Inserting weekly selections...")
+        for weeklySelection in weeklySelections {
+            try weeklySelection.upsert(db)
         }
 
     }

@@ -8,6 +8,7 @@
 import ArgumentParser
 import Foundation
 import GRDB
+import SwiftNotion
 import SwiftTMDB
 
 @main
@@ -20,7 +21,7 @@ struct CreateMovieDB: AsyncParsableCommand {
         let tmdb = try createTMDBClient()
         let notion = try createNotionClient()
 
-        // Parse input file for TMDB IDs
+        //         Parse input file for TMDB IDs
         let tmdbIds = try parseTMDBIds(inputFile)
 
         // Get movie details from IDs
@@ -34,8 +35,40 @@ struct CreateMovieDB: AsyncParsableCommand {
         // Convert data to format to insert into database
         let (dbMovies, dbGenres, dbPeople, dbMoviesToGenres, dbMoviesToPeople) =
             convertTMDBtoDB(movies: tmdbMovies, genres: tmdbGenres)
+
+        print("Getting rows from Notion database...")
+        let rows = try await notion.getDatabaseRows(
+            dataSourceId: "9d9e132b-5b77-496f-b78b-3c0abd33d1f2"
+        )
         
-        try await insertToDatabase(movies: dbMovies, genres: dbGenres, people: dbPeople, moviesToGenres: dbMoviesToGenres, moviesToPeople: dbMoviesToPeople)
+        print("Getting ")
+        var pageList: [NotionPage] = []
+        for row in rows {
+            let page = try await notion.getPage(pageId: row.id)
+            pageList.append(page)
+        }
+
+        var weeklySelections: [WeeklySelections] = []
+        for page in pageList {
+            let moviePages = try await extractMoviePages(
+                from: page,
+                with: notion
+            )
+            let weeklySelection = buildWeeklySelections(
+                from: page,
+                with: moviePages
+            )
+            weeklySelections.append(weeklySelection)
+        }
+
+        try await insertToDatabase(
+            movies: dbMovies,
+            genres: dbGenres,
+            people: dbPeople,
+            moviesToGenres: dbMoviesToGenres,
+            moviesToPeople: dbMoviesToPeople,
+            weeklySelections: weeklySelections
+        )
     }
 }
 
