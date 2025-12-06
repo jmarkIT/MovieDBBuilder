@@ -13,16 +13,20 @@ import SwiftTMDB
 
 @main
 struct CreateMovieDB: AsyncParsableCommand {
-    @Argument(help: "a csv file containing a list of TMDB ids")
-    var inputFile: String
-
     mutating func run() async throws {
         // Build api clients
         let tmdb = try createTMDBClient()
         let notion = try createNotionClient()
 
-        //         Parse input file for TMDB IDs
-        let tmdbIds = try parseTMDBIds(inputFile)
+        // Get Movie Data from Notion
+        let movieRows = try await notion.getDatabaseRows(
+            dataSourceId: "a105db30-4d76-40b0-99c9-32f1faede907"
+        )
+        var tmdbIds: [String] = []
+        for movie in movieRows {
+            let tmdbId = movie.properties["TMDB ID"]!.plainText!
+            tmdbIds.append(tmdbId)
+        }
 
         // Get movie details from IDs
         print("Getting movie data from TMDB API...")
@@ -40,7 +44,7 @@ struct CreateMovieDB: AsyncParsableCommand {
         let rows = try await notion.getDatabaseRows(
             dataSourceId: "9d9e132b-5b77-496f-b78b-3c0abd33d1f2"
         )
-        
+
         print("Getting ")
         var pageList: [NotionPage] = []
         for row in rows {
