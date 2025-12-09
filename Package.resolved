@@ -1,5 +1,5 @@
 {
-  "originHash" : "b2f45f4e160c9d8ee696d58e2811c41fadb47f399707dd5495a0523e0748a6e9",
+  "originHash" : "56c134f7d38a5822f972d05a671ab8d6af0f11b4cf731ecd04a97cb66aea2949",
   "pins" : [
     {
       "identity" : "grdb.swift",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "cdd0ef3755280949551dc26dee5de9ddeda89f54",
         "version" : "1.6.2"
+      }
+    },
+    {
+      "identity" : "swiftdiscogs",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jmarkIT/SwiftDiscogs.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "c1be2b7950ce03a01c7e704c96b50ac99682c78c"
       }
     },
     {
