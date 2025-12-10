@@ -24,6 +24,10 @@ let package = Package(
             url: "https://github.com/jmarkIT/SwiftDiscogs.git",
             branch: "main"
         ),
+        .package(
+            url: "https://github.com/jmarkIT/SwiftMusicBrainz.git",
+            branch: "main"
+        ),
     ],
     targets: [
         // Targets are the basic building
@@ -40,6 +44,7 @@ let package = Package(
                 .product(name: "SwiftTMDB", package: "SwiftTMDB"),
                 .product(name: "SwiftNotion", package: "SwiftNotion"),
                 .product(name: "SwiftDiscogs", package: "SwiftDiscogs"),
+                .product(name: "SwiftMusicBrainz", package: "SwiftMusicBrainz"),
             ],
             path: "Sources"
         )

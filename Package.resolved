@@ -1,5 +1,5 @@
 {
-  "originHash" : "56c134f7d38a5822f972d05a671ab8d6af0f11b4cf731ecd04a97cb66aea2949",
+  "originHash" : "90fe9d50514f49a411be9061a602d6ffad664e9f1016f67efb68d2d032229003",
   "pins" : [
     {
       "identity" : "grdb.swift",
@@ -26,6 +26,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "c1be2b7950ce03a01c7e704c96b50ac99682c78c"
+      }
+    },
+    {
+      "identity" : "swiftmusicbrainz",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jmarkIT/SwiftMusicBrainz.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "a2695af9b59187c4b6c6b79bb004e1e00adde925"
       }
     },
     {
