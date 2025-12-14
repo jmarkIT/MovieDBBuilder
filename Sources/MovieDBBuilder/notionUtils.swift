@@ -8,6 +8,16 @@ import Foundation
 import GRDB
 import SwiftNotion
 
+func createNotionClient() throws -> NotionClient {
+    guard let notionToken = ProcessInfo.processInfo.environment["NOTION_TOKEN"]
+    else {
+        throw RuntimeError("Please set the NOTION_TOKEN environment variable")
+    }
+    let cfg = NotionConfig(authToken: notionToken)
+    let notion = NotionClient(cfg: cfg)
+    return notion
+}
+
 func makeDatabaseDateComponents(from dateString: String)
     -> DatabaseDateComponents?
 {
