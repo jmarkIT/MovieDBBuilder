@@ -1,5 +1,5 @@
 {
-  "originHash" : "05089fe4c6b02a8c2ab5a3765156c27d8de81aea188ab015477e7f59679808fe",
+  "originHash" : "f747a0395d88260e033a21fd369625c755a5b4aa2a9c89251dd36c9f244ca891",
   "pins" : [
     {
       "identity" : "grdb.swift",
@@ -17,6 +17,33 @@
       "state" : {
         "revision" : "cdd0ef3755280949551dc26dee5de9ddeda89f54",
         "version" : "1.6.2"
+      }
+    },
+    {
+      "identity" : "swiftapiclient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jmarkIT/SwiftAPIClient.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ffa4d01ee9f64b676a7fab3ef36c34f0804fdb60"
+      }
+    },
+    {
+      "identity" : "swiftmusicbrainz",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jmarkIT/SwiftMusicBrainz.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "33b5df74fdb873d2bc90ff5bf4d612df7fe3b309"
+      }
+    },
+    {
+      "identity" : "swiftnotion",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jmarkIT/SwiftNotion.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "7f9475a8559567849af11443c58289293e03f106"
       }
     },
     {

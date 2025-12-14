@@ -2,157 +2,50 @@
 //  utils.swift
 //  MovieDBBuilder
 //
-//  Created by James Mark on 11/25/25.
+//  Created by James Mark on 12/12/25.
 //
 
-import ArgumentParser
-import Foundation
-import GRDB
-import SwiftTMDB
+extension Sequence where Element: Sendable {
+    func concurrentMap<U: Sendable>(
+        maxConcurrent: Int,
+        _ transform: @Sendable @escaping (Element) async throws -> U
+    ) async throws -> [U] {
 
-func createTMDBClient() throws -> TMDBClient {
-    guard let tmdbToken = ProcessInfo.processInfo.environment["TMDB_TOKEN"]
-    else {
-        throw RuntimeError("Please set the TMDB_TOKEN environment variable")
-    }
-    let cfg = TMDBConfig(authToken: tmdbToken)
-    let tmdb = TMDBClient(cfg: cfg)
-    return tmdb
-}
+        var results = Array<U?>(repeating: nil, count: self.underestimatedCount)
 
-func parseTMDBIds(_ inputFile: String) throws -> [String] {
-    guard
-        let input = try? String(contentsOfFile: inputFile, encoding: .utf8)
-    else {
-        throw RuntimeError("Couldn't read from '\(inputFile)'")
-    }
+        try await withThrowingTaskGroup(of: (Int, U).self) { group in
+            var index = 0
+            var iterator = self.makeIterator()
 
-    print("Getting tmdbids from file \(inputFile)")
+            // Start initial tasks
+            for _ in 0..<maxConcurrent {
+                guard let element = iterator.next() else { break }
+                let currentIndex = index
+                index += 1
 
-    var tmdbIDs: [String] = []
-    for line in input.components(separatedBy: .newlines) {
-        guard !line.isEmpty else { continue }
-        tmdbIDs.append(line.trimmingCharacters(in: .whitespacesAndNewlines))
-    }
-    return tmdbIDs
-}
-
-func getTMDBMovies(from tmdbIds: [String], with tmdb: TMDBClient) async
-    -> [TMDBMovie]
-{
-    var tmdbMovies: [TMDBMovie] = []
-    for id in tmdbIds {
-        do {
-            let movie = try await tmdb.getMovie(
-                movieId: id,
-                appendToResponse: ["credits"]
-            )
-            tmdbMovies.append(movie)
-        } catch {
-            print("Skipping id \(id) due to error: \(error)")
-        }
-    }
-    return tmdbMovies
-}
-
-func getTMDBGenres(with tmdb: TMDBClient) async throws -> [Genre] {
-    var tmdbGenres: [Genre] = []
-    do {
-        let genres = try await tmdb.getGenres()
-        tmdbGenres.append(contentsOf: genres)
-    } catch {
-        throw RuntimeError("Error while getting genres: \(error)")
-    }
-    return tmdbGenres
-}
-
-func convertTMDBtoDB(movies: [TMDBMovie], genres: [Genre])
-    -> ([Movies], [Genres], [People], [MoviesToGenres], [MoviesToPeople])
-{
-    let dbMovies = movies.map(Movies.init(from:))
-    let dbGenres = genres.map(Genres.init(from:))
-    let dbPeople = movies.flatMap { movie in
-        guard let credits = movie.credits else { return [] as [People] }
-        return credits.cast.map(People.init(from:))
-            + credits.crew.map(People.init(from:))
-    }
-    let dbMoviesToGenres = movies.flatMap { movie in
-        movie.genres.map {
-            MoviesToGenres(movieId: movie.id, genreId: $0.id)
-        }
-    }
-    let dbMoviesToPeople: [MoviesToPeople] = movies.flatMap {
-        (movie) -> [MoviesToPeople] in
-        guard let credits = movie.credits else {
-            return [] as [MoviesToPeople]
-        }
-        return credits.cast.map {
-            MoviesToPeople(
-                creditId: $0.creditId,
-                movieId: movie.id,
-                personId: $0.id,
-                isCast: 1,
-                castId: $0.castId,
-                character: $0.character,
-                order: $0.order,
-                department: $0.department,
-                job: $0.job
-
-            )
-        }
-            + credits.crew.map {
-                MoviesToPeople(
-                    creditId: $0.creditId,
-                    movieId: movie.id,
-                    personId: $0.id,
-                    isCast: 0,
-                    castId: $0.castId,
-                    character: $0.character,
-                    order: $0.order,
-                    department: $0.department,
-                    job: $0.job
-                )
+                group.addTask {
+                    let value = try await transform(element)
+                    return (currentIndex, value)
+                }
             }
-    }
 
-    return (dbMovies, dbGenres, dbPeople, dbMoviesToGenres, dbMoviesToPeople)
-}
+            // As tasks finish, enqueue new ones
+            while let (finishedIndex, value) = try await group.next() {
+                results[finishedIndex] = value
 
-func insertToDatabase(
-    movies: [Movies],
-    genres: [Genres],
-    people: [People],
-    moviesToGenres: [MoviesToGenres],
-    moviesToPeople: [MoviesToPeople]
-) async throws {
-    let dbQueue = try! DatabaseQueue(path: "db.sqlite3")
-    try await makeTables(dbQueue: dbQueue)
+                if let nextElement = iterator.next() {
+                    let currentIndex = index
+                    index += 1
 
-    try await dbQueue.write { db in
-        print("Inserting movies...")
-        for movie in movies {
-            try movie.upsert(db)
+                    group.addTask {
+                        let value = try await transform(nextElement)
+                        return (currentIndex, value)
+                    }
+                }
+            }
         }
 
-        print("Inserting genres...")
-        for genre in genres {
-            try genre.upsert(db)
-        }
-
-        print("Inserting people...")
-        for person in people {
-            try person.upsert(db)
-        }
-
-        print("Inserting movie-genre relationships...")
-        for movieToGenre in moviesToGenres {
-            try movieToGenre.upsert(db)
-        }
-
-        print("Inserting movie-person relationships...")
-        for movieToPerson in moviesToPeople {
-            try movieToPerson.upsert(db)
-        }
+        return results.compactMap { $0 }
 
     }
 }

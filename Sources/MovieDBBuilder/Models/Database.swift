@@ -38,7 +38,7 @@ func makeTables(dbQueue: DatabaseQueue) async throws {
             t.column("genre_id", .integer).notNull()
             t.primaryKey(["movie_id", "genre_id"])
         }
-        
+
         // Create MoviesToPeople table
         try db.create(table: "moviesToPeople", options: [.ifNotExists]) { t in
             t.primaryKey("credit_id", .text)
@@ -50,6 +50,37 @@ func makeTables(dbQueue: DatabaseQueue) async throws {
             t.column("order", .integer)
             t.column("department", .text)
             t.column("job", .text)
+        }
+
+        // Create Albums table
+        try db.create(table: "albums", options: [.ifNotExists]) { t in
+            t.primaryKey("id", .text)
+            t.column("title", .text)
+            t.column("date", .text)
+        }
+
+        // Create AlbumGenres table
+        try db.create(table: "albumGenres", options: [.ifNotExists]) { t in
+            t.primaryKey("id", .text)
+            t.column("name", .text)
+        }
+
+        // Create AlbumsToAlbumGenres table
+        try db.create(table: "albumsToAlbumGenres", options: [.ifNotExists]) {
+            t in
+            t.belongsTo("album", inTable: "albums").notNull()
+            t.belongsTo("genre_id", inTable: "albumGenres").notNull()
+            t.primaryKey(["album_id", "genre_id"])
+        }
+
+        // Create WeeklySelections table
+        try db.create(table: "weeklySelections", options: [.ifNotExists]) { t in
+            t.primaryKey("week_of", .text)
+            t.column("master_of_ceremony", .text).notNull()
+            t.belongsTo("movie1", inTable: "movies").notNull()
+            t.belongsTo("movie2", inTable: "movies")
+            t.belongsTo("album1", inTable: "albums")
+            t.belongsTo("album2", inTable: "albums")
         }
     }
 }
