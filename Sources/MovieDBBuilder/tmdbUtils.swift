@@ -156,7 +156,7 @@ func insertToDatabase(
         for movieToPerson in moviesToPeople {
             try movieToPerson.upsert(db)
         }
-        
+
         print("Inserting weekly selections...")
         for weeklySelection in weeklySelections {
             try weeklySelection.upsert(db)
