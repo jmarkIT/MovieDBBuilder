@@ -8,6 +8,7 @@
 import ArgumentParser
 import Foundation
 import GRDB
+import SwiftMusicBrainz
 import SwiftNotion
 import SwiftTMDB
 
@@ -20,8 +21,6 @@ func createTMDBClient() throws -> TMDBClient {
     let tmdb = TMDBClient(cfg: cfg)
     return tmdb
 }
-
-
 
 func parseTMDBIds(_ inputFile: String) throws -> [String] {
     guard
@@ -118,7 +117,10 @@ func insertToDatabase(
     people: [People],
     moviesToGenres: [MoviesToGenres],
     moviesToPeople: [MoviesToPeople],
-    weeklySelections: [WeeklySelections]
+    albums: [Albums],
+    albumGenres: [AlbumGenres],
+    albumsToGenres: [AlbumGenres],
+    weeklySelections: [WeeklySelections],
 ) async throws {
     let dbQueue = try! DatabaseQueue(path: "db.sqlite3")
     try await makeTables(dbQueue: dbQueue)
@@ -147,6 +149,21 @@ func insertToDatabase(
         print("Inserting movie-person relationships...")
         for movieToPerson in moviesToPeople {
             try movieToPerson.upsert(db)
+        }
+        
+        print("Inserting albums...")
+        for album in albums {
+            try album.upsert(db)
+        }
+        
+        print("Inserting album genres...")
+        for genre in albumGenres {
+            try genre.upsert(db)
+        }
+        
+        print("Inserting album-genre relationships...")
+        for albumToGenre in albumsToGenres {
+            try albumToGenre.upsert(db)
         }
 
         print("Inserting weekly selections...")
