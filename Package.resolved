@@ -20,12 +20,21 @@
       }
     },
     {
+      "identity" : "swiftapiclient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jmarkIT/SwiftAPIClient.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ffa4d01ee9f64b676a7fab3ef36c34f0804fdb60"
+      }
+    },
+    {
       "identity" : "swiftmusicbrainz",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jmarkIT/SwiftMusicBrainz.git",
       "state" : {
         "branch" : "main",
-        "revision" : "a2695af9b59187c4b6c6b79bb004e1e00adde925"
+        "revision" : "839fd4b83fcffc3752e04c0fe46bfe47965ac11d"
       }
     },
     {
