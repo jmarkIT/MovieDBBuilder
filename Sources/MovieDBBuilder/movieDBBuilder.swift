@@ -50,15 +50,15 @@ struct CreateMovieDB: AsyncParsableCommand {
             dataSourceId: "9d9e132b-5b77-496f-b78b-3c0abd33d1f2"
         )
 
-        print("Getting ")
-        var pageList: [NotionPage] = []
+        print("Getting Weekly Selections from Notion database...")
+        var weeklySelectionPageList: [NotionPage] = []
         for row in rows {
             let page = try await notion.getPage(pageId: row.id)
-            pageList.append(page)
+            weeklySelectionPageList.append(page)
         }
 
         var weeklySelections: [WeeklySelections] = []
-        for page in pageList {
+        for page in weeklySelectionPageList {
             let moviePages = try await extractMoviePages(
                 from: page,
                 with: notion
