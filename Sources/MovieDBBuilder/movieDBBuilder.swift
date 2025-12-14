@@ -17,11 +17,18 @@ struct CreateMovieDB: AsyncParsableCommand {
         // Build api clients
         let tmdb = try createTMDBClient()
         let notion = try createNotionClient()
+        let musicBrainz = try createMusicBrainzClient()
 
         // Get Album Data from Notion
         let albumRows = try await notion.getDatabaseRows(
             dataSourceId: "9f42fba7-d154-430d-b025-679ea1f1123b"
         )
+        var musicBrainzIds: [String] = []
+        for album in albumRows {
+            let musicBrainzId = album.properties["MusicBrainz Release ID"]!.plainText!
+            musicBrainzIds.append(musicBrainzId)
+        }
+        
         
         // Get Movie Data from Notion
         let movieRows = try await notion.getDatabaseRows(
