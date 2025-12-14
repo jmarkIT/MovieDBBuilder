@@ -8,15 +8,6 @@ import Foundation
 import SwiftMusicBrainz
 
 func createMusicBrainzClient() throws -> MusicBrainzClient {
-    guard
-        let musicBrainzToken = ProcessInfo.processInfo.environment[
-            "MUSIC_BRAINZ_TOKEN"
-        ]
-    else {
-        throw RuntimeError(
-            "Please set the MUSIC_BRAINZ_TOKEN environment variable"
-        )
-    }
     guard let appName = ProcessInfo.processInfo.environment["APP_NAME"] else {
         throw RuntimeError("Please set APP_NAME environment variable")
     }
@@ -29,7 +20,6 @@ func createMusicBrainzClient() throws -> MusicBrainzClient {
         throw RuntimeError("Please set APP_NAME environment variable")
     }
     let cfg = MusicBrainzConfig(
-        authToken: musicBrainzToken,
         appName: appName,
         appVersion: appVersion,
         contactInfo: contactInfo
