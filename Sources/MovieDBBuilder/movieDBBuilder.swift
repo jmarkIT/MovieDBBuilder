@@ -29,6 +29,9 @@ struct CreateMovieDB: AsyncParsableCommand {
             musicBrainzIds.append(musicBrainzId)
         }
         
+        let release = try await musicBrainz.getRelease(for: "aa97e4af-a4a6-4e59-9319-80f7fa64e376")
+        print(release)
+        
         
         // Get Movie Data from Notion
         let movieRows = try await notion.getDatabaseRows(
