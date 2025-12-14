@@ -42,7 +42,7 @@ struct CreateMovieDB: AsyncParsableCommand {
 
         // Get movie details from IDs
         print("Getting movie data from TMDB API...")
-        let tmdbMovies = await getTMDBMovies(from: tmdbIds, with: tmdb)
+        let tmdbMovies = try await getTMDBMovies(from: tmdbIds, with: tmdb)
 
         // Call the TMDB api to pull all available genres
         print("Getting genres from TMDB API...")
