@@ -8,15 +8,32 @@ import Foundation
 import SwiftMusicBrainz
 
 func createMusicBrainzClient() throws -> MusicBrainzClient {
-    guard let musicBrainzToken = ProcessInfo.processInfo.environment["MUSIC_BRAINZ_TOKEN"]
+    guard
+        let musicBrainzToken = ProcessInfo.processInfo.environment[
+            "MUSIC_BRAINZ_TOKEN"
+        ]
     else {
-        throw RuntimeError("Please set the MUSIC_BRAINZ_TOKEN environment variable")
+        throw RuntimeError(
+            "Please set the MUSIC_BRAINZ_TOKEN environment variable"
+        )
     }
-    guard let userAgent = ProcessInfo.processInfo.environment["MUSIC_BRAINZ_USER_AGENT"]
-    else {
-        throw RuntimeError("Please set MUSIC_BRAINZ_USER_AGENT environment variable")
+    guard let appName = ProcessInfo.processInfo.environment["APP_NAME"] else {
+        throw RuntimeError("Please set APP_NAME environment variable")
     }
-    let cfg = MusicBrainzConfig(authToken: musicBrainzToken, userAgent: userAgent)
+    
+    guard let appVersion = ProcessInfo.processInfo.environment["APP_VERSION"] else {
+        throw RuntimeError("Please set APP_NAME environment variable")
+    }
+    
+    guard let contactInfo = ProcessInfo.processInfo.environment["CONTACT_INFO"] else {
+        throw RuntimeError("Please set APP_NAME environment variable")
+    }
+    let cfg = MusicBrainzConfig(
+        authToken: musicBrainzToken,
+        appName: appName,
+        appVersion: appVersion,
+        contactInfo: contactInfo
+    )
     let musicBrainz = MusicBrainzClient(cfg: cfg)
     return musicBrainz
 }
