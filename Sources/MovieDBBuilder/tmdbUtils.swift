@@ -48,20 +48,11 @@ func parseTMDBIds(_ inputFile: String) throws -> [String] {
     return tmdbIDs
 }
 
-func getTMDBMovies(from tmdbIds: [String], with tmdb: TMDBClient) async
+func getTMDBMovies(from tmdbIds: [String], with tmdb: TMDBClient) async throws
     -> [TMDBMovie]
 {
-    var tmdbMovies: [TMDBMovie] = []
-    for id in tmdbIds {
-        do {
-            let movie = try await tmdb.getMovie(
-                movieId: id,
-                appendToResponse: ["credits"]
-            )
-            tmdbMovies.append(movie)
-        } catch {
-            print("Skipping id \(id) due to error: \(error)")
-        }
+    let tmdbMovies = try await tmdbIds.concurrentMap(maxConcurrent: 5) {
+        try await tmdb.getMovie(movieId: $0, appendToResponse: ["credits"])
     }
     return tmdbMovies
 }
