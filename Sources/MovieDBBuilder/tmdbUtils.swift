@@ -119,7 +119,7 @@ func insertToDatabase(
     moviesToPeople: [MoviesToPeople],
     albums: [Albums],
     albumGenres: [AlbumGenres],
-    albumsToGenres: [AlbumGenres],
+    albumsToGenres: [AlbumToGenres],
     weeklySelections: [WeeklySelections],
 ) async throws {
     let dbQueue = try! DatabaseQueue(path: "db.sqlite3")

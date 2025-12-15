@@ -20,6 +20,7 @@ struct CreateMovieDB: AsyncParsableCommand {
         let musicBrainz = try createMusicBrainzClient()
 
         // Get Album Data from Notion
+        print("Getting albums from Notion...")
         let albumRows = try await notion.getDatabaseRows(
             dataSourceId: "9f42fba7-d154-430d-b025-679ea1f1123b"
         )
@@ -29,11 +30,19 @@ struct CreateMovieDB: AsyncParsableCommand {
             musicBrainzIds.append(musicBrainzId)
         }
         
-        let release = try await musicBrainz.getRelease(for: "aa97e4af-a4a6-4e59-9319-80f7fa64e376")
-        print(release)
+        // Get album details from MusicBrainz
+        print("Getting album details from MusicBrainz...")
+        let musicBrainzReleases = try await getMusicBrainzReleases(from: musicBrainzIds, with: musicBrainz)
         
+        // Get all MusicBrainz genres
+        print("Getting music genres from MusicBrainz...")
+        let musicBrainzGenres = try await musicBrainz.getAllGenres()
+        
+        // Convert album data to format to insert into database
+        let (dbAlbums, dbAlbumGenres, dbAlbumsToGenres) = convertMusicBrainzToDB(albums: musicBrainzReleases, genres: musicBrainzGenres)
         
         // Get Movie Data from Notion
+        print("Getting movie data from Notion...")
         let movieRows = try await notion.getDatabaseRows(
             dataSourceId: "a105db30-4d76-40b0-99c9-32f1faede907"
         )
@@ -86,6 +95,9 @@ struct CreateMovieDB: AsyncParsableCommand {
             people: dbPeople,
             moviesToGenres: dbMoviesToGenres,
             moviesToPeople: dbMoviesToPeople,
+            albums: dbAlbums,
+            albumGenres: dbAlbumGenres,
+            albumsToGenres: dbAlbumsToGenres,
             weeklySelections: weeklySelections
         )
     }

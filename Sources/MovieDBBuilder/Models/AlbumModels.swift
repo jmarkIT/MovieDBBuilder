@@ -42,3 +42,20 @@ extension AlbumGenres {
         self.init(id: api.id, name: api.name)
     }
 }
+
+struct AlbumToGenres: Codable, FetchableRecord, PersistableRecord {
+    var albumId: String
+    var genreId: String
+    
+    enum Columns {
+        static let albumId = Column(CodingKeys.albumId)
+        static let genreId = Column(CodingKeys.genreId)
+    }
+}
+
+extension AlbumToGenres {
+    init(from api: MusicBrainzRelease, genreId: String){
+        self.albumId = api.id
+        self.genreId = genreId
+    }
+}
