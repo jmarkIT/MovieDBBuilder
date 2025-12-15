@@ -26,21 +26,35 @@ struct CreateMovieDB: AsyncParsableCommand {
         )
         var musicBrainzIds: [String] = []
         for album in albumRows {
-            let musicBrainzId = album.properties["MusicBrainz Release ID"]!.plainText!
+            let musicBrainzId = album.properties["MusicBrainz Release ID"]!
+                .plainText!
             musicBrainzIds.append(musicBrainzId)
         }
-        
+
         // Get album details from MusicBrainz
         print("Getting album details from MusicBrainz...")
-        let musicBrainzReleases = try await getMusicBrainzReleases(from: musicBrainzIds, with: musicBrainz)
-        
+        //        let musicBrainzReleases = try await getMusicBrainzReleases(from: musicBrainzIds, with: musicBrainz)
+        let musicBrainzReleaseIds = [
+            "3c54c98c-6151-4eee-8981-5a7d9b7da97c",
+            "a57a4689-eb83-4ffc-b083-f3c30956108f",
+            "4a18986d-1598-43a8-b15f-0340af442ffe",
+        ]
+        let musicBrainzReleases = try await getMusicBrainzReleases(
+            from: musicBrainzReleaseIds,
+            with: musicBrainz
+        )
+
         // Get all MusicBrainz genres
         print("Getting music genres from MusicBrainz...")
         let musicBrainzGenres = try await musicBrainz.getAllGenres()
-        
+
         // Convert album data to format to insert into database
-        let (dbAlbums, dbAlbumGenres, dbAlbumsToGenres) = convertMusicBrainzToDB(albums: musicBrainzReleases, genres: musicBrainzGenres)
-        
+        let (dbAlbums, dbAlbumGenres, dbAlbumsToGenres) =
+            convertMusicBrainzToDB(
+                albums: musicBrainzReleases,
+                genres: musicBrainzGenres
+            )
+
         // Get Movie Data from Notion
         print("Getting movie data from Notion...")
         let movieRows = try await notion.getDatabaseRows(
