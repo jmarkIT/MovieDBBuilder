@@ -14,8 +14,8 @@ struct WeeklySelections: Codable, FetchableRecord, PersistableRecord {
     var movieId2: Int?
 
     enum CodingKeys: String, CodingKey {
-        case weekOf = "week_of"
-        case masterOfCeremony = "master_of_ceremony"
+        case weekOf = "weekOf"
+        case masterOfCeremony = "masterOfCeremony"
         case movieId1 = "movie1Id"
         case movieId2 = "movie2Id"
     }

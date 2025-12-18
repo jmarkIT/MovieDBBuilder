@@ -29,23 +29,23 @@ func makeTables(dbQueue: DatabaseQueue) async throws {
             t.primaryKey("id", .integer)
             t.column("name", .text).notNull()
             t.column("gender", .integer).notNull()
-            t.column("known_for_department", .text)
+            t.column("knownForDepartment", .text)
         }
 
         // Create MoviesToGenre table
         try db.create(table: "moviesToGenres", options: [.ifNotExists]) { t in
-            t.column("movie_id", .integer).notNull()
-            t.column("genre_id", .integer).notNull()
-            t.primaryKey(["movie_id", "genre_id"])
+            t.column("movieId", .integer).notNull()
+            t.column("genreId", .integer).notNull()
+            t.primaryKey(["movieId", "genreId"])
         }
 
         // Create MoviesToPeople table
         try db.create(table: "moviesToPeople", options: [.ifNotExists]) { t in
-            t.primaryKey("credit_id", .text)
-            t.column("movie_id", .integer).notNull()
-            t.column("person_id", .integer).notNull()
-            t.column("is_cast", .integer).notNull()
-            t.column("cast_id", .integer)
+            t.primaryKey("creditId", .text)
+            t.column("movieId", .integer).notNull()
+            t.column("personId", .integer).notNull()
+            t.column("isCast", .integer).notNull()
+            t.column("castId", .integer)
             t.column("character", .text)
             t.column("order", .integer)
             t.column("department", .text)
@@ -66,17 +66,17 @@ func makeTables(dbQueue: DatabaseQueue) async throws {
         }
 
         // Create AlbumsToAlbumGenres table
-        try db.create(table: "albumsToAlbumGenres", options: [.ifNotExists]) {
+        try db.create(table: "albumsToGenres", options: [.ifNotExists]) {
             t in
             t.belongsTo("album", inTable: "albums").notNull()
-            t.belongsTo("genre_id", inTable: "albumGenres").notNull()
-            t.primaryKey(["album_id", "genre_id"])
+            t.belongsTo("genre", inTable: "albumGenres").notNull()
+            t.primaryKey(["albumId", "genreId"])
         }
 
         // Create WeeklySelections table
         try db.create(table: "weeklySelections", options: [.ifNotExists]) { t in
-            t.primaryKey("week_of", .text)
-            t.column("master_of_ceremony", .text).notNull()
+            t.primaryKey("weekOf", .text)
+            t.column("masterOfCeremony", .text).notNull()
             t.belongsTo("movie1", inTable: "movies").notNull()
             t.belongsTo("movie2", inTable: "movies")
             t.belongsTo("album1", inTable: "albums")

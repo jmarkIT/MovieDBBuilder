@@ -24,21 +24,24 @@ struct CreateMovieDB: AsyncParsableCommand {
         let albumRows = try await notion.getDatabaseRows(
             dataSourceId: "9f42fba7-d154-430d-b025-679ea1f1123b"
         )
-        var musicBrainzIds: [String] = []
+        var musicBrainzReleaseIds: [String] = []
         for album in albumRows {
             let musicBrainzId = album.properties["MusicBrainz Release ID"]!
                 .plainText!
-            musicBrainzIds.append(musicBrainzId)
+            musicBrainzReleaseIds.append(musicBrainzId)
         }
 
         // Get album details from MusicBrainz
         print("Getting album details from MusicBrainz...")
-        //        let musicBrainzReleases = try await getMusicBrainzReleases(from: musicBrainzIds, with: musicBrainz)
-        let musicBrainzReleaseIds = [
-            "3c54c98c-6151-4eee-8981-5a7d9b7da97c",
-            "a57a4689-eb83-4ffc-b083-f3c30956108f",
-            "4a18986d-1598-43a8-b15f-0340af442ffe",
-        ]
+//        let musicBrainzReleases = try await getMusicBrainzReleases(
+//            from: musicBrainzIds,
+//            with: musicBrainz
+//        )
+//        let musicBrainzReleaseIds = [
+//            "3c54c98c-6151-4eee-8981-5a7d9b7da97c",
+//            "a57a4689-eb83-4ffc-b083-f3c30956108f",
+//            "4a18986d-1598-43a8-b15f-0340af442ffe",
+//        ]
         let musicBrainzReleases = try await getMusicBrainzReleases(
             from: musicBrainzReleaseIds,
             with: musicBrainz

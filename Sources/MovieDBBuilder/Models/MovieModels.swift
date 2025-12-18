@@ -63,7 +63,7 @@ struct People: Codable, Identifiable, FetchableRecord, PersistableRecord {
         case id
         case name
         case gender
-        case knownForDepartment = "known_for_department"
+        case knownForDepartment = "knownForDepartment"
     }
 
     enum Columns {
@@ -91,8 +91,8 @@ struct MoviesToGenres: Codable, FetchableRecord, PersistableRecord
     var genreId: Int
     
     enum CodingKeys: String, CodingKey {
-        case movieId = "movie_id"
-        case genreId = "genre_id"
+        case movieId = "movieId"
+        case genreId = "genreId"
     }
 
     enum Columns {
@@ -122,11 +122,11 @@ struct MoviesToPeople: Codable, Identifiable, FetchableRecord, PersistableRecord
     var job: String?
     
     enum CodingKeys: String, CodingKey {
-        case creditId = "credit_id"
-        case movieId = "movie_id"
-        case personId = "person_id"
-        case isCast = "is_cast"
-        case castId = "cast_id"
+        case creditId = "creditId"
+        case movieId = "movieId"
+        case personId = "personId"
+        case isCast = "isCast"
+        case castId = "castId"
         case character
         case order
         case department

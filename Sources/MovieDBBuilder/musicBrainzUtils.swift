@@ -40,12 +40,12 @@ func getMusicBrainzReleases(from musicBrainzIds: [String], with musicBrainz: Mus
 func convertMusicBrainzToDB(
     albums: [MusicBrainzRelease],
     genres: [MusicBrainzGenre]
-) -> ([Albums], [AlbumGenres], [AlbumToGenres]) {
+) -> ([Albums], [AlbumGenres], [AlbumsToGenres]) {
     let dbAlbums = albums.map(Albums.init(from:))
     let dbAlbumGenres = genres.map(AlbumGenres.init(from:))
     let dbAlbumsToGenres = albums.flatMap { album in
         album.genres.map {
-            AlbumToGenres(albumId: album.id, genreId: $0.id)
+            AlbumsToGenres(albumId: album.id, genreId: $0.id)
         }
     }
     

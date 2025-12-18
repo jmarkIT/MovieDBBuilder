@@ -43,7 +43,7 @@ extension AlbumGenres {
     }
 }
 
-struct AlbumToGenres: Codable, FetchableRecord, PersistableRecord {
+struct AlbumsToGenres: Codable, FetchableRecord, PersistableRecord {
     var albumId: String
     var genreId: String
     
@@ -53,7 +53,7 @@ struct AlbumToGenres: Codable, FetchableRecord, PersistableRecord {
     }
 }
 
-extension AlbumToGenres {
+extension AlbumsToGenres {
     init(from api: MusicBrainzRelease, genreId: String){
         self.albumId = api.id
         self.genreId = genreId
