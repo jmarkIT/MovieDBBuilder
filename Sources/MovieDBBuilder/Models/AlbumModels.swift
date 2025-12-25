@@ -12,7 +12,7 @@ import SwiftMusicBrainz
 struct Albums: Codable, Identifiable, FetchableRecord, PersistableRecord {
     var id: String
     var title: String
-    var date: String
+    var date: String?
 
     enum Columns {
         static let id = Column(CodingKeys.id)
